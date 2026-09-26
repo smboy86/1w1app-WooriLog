@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Alert } from "react-native";
+import { Alert, Pressable, View, Text } from "react-native";
 import { useStore } from "../data/context";
 import { type Family, type Member } from "../data/store";
 import {
@@ -11,10 +11,12 @@ import {
   Label,
   Input,
 } from "../components/ui";
+import { MEMBER_COLORS, COLOR_NAMES } from "../data/report";
 export default function FamilyScreen() {
   const store = useStore();
   const [family, setFamily] = useState<Family | null>(null);
   const [members, setMembers] = useState<Member[]>([]);
+  const [color, setColor] = useState<string>(MEMBER_COLORS[0]);
   const [name, setName] = useState("");
   const [editing, setEditing] = useState<string | null>(null);
   const [busy, setBusy] = useState(true);
@@ -36,7 +38,14 @@ export default function FamilyScreen() {
   const load = () => read().then(apply);
   useEffect(() => {
     read()
-      .then(apply)
+      .then((data) => {
+        apply(data);
+        setColor(
+          MEMBER_COLORS.find(
+            (value) => !data.members.some((member) => member.color === value),
+          ) ?? MEMBER_COLORS[data.members.length % MEMBER_COLORS.length],
+        );
+      })
       .catch(() => setError("가족을 불러오지 못했어요."))
       .finally(() => setBusy(false));
   }, [read, apply]);
@@ -45,10 +54,15 @@ export default function FamilyScreen() {
     setBusy(true);
     setError("");
     try {
-      if (editing) await store.renameMember(family.id, editing, name);
-      else await store.addMember(family.id, name);
+      if (editing) await store.updateMember(family.id, editing, name, color);
+      else await store.addMember(family.id, name, color);
       setName("");
       setEditing(null);
+      setColor(
+        MEMBER_COLORS[
+          (members.length + (editing ? 0 : 1)) % MEMBER_COLORS.length
+        ],
+      );
       await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : "저장하지 못했어요.");
@@ -97,8 +111,43 @@ export default function FamilyScreen() {
         onChangeText={setName}
         editable={!busy}
       />
+      <Label>달력에 표시할 가족 색상</Label>
+      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+        {MEMBER_COLORS.map((value, index) => (
+          <Pressable
+            key={value}
+            disabled={busy}
+            accessibilityRole="radio"
+            accessibilityLabel={COLOR_NAMES[index]}
+            accessibilityState={{ selected: value === color, disabled: busy }}
+            onPress={() => setColor(value)}
+            style={{
+              width: 48,
+              height: 48,
+              padding: 4,
+              borderRadius: 24,
+              borderWidth: 2,
+              borderColor: value === color ? "#203C36" : "transparent",
+            }}
+          >
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: value,
+                borderRadius: 20,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={{ color: "white", fontSize: 20 }}>
+                {value === color ? "✓" : ""}
+              </Text>
+            </View>
+          </Pressable>
+        ))}
+      </View>
       <Button
-        title={editing ? "이름 수정" : "가족 구성원 추가"}
+        title={editing ? "구성원 수정" : "가족 구성원 추가"}
         disabled={busy || !family || !name.trim()}
         onPress={() => void save()}
       />
@@ -119,17 +168,28 @@ export default function FamilyScreen() {
       ) : null}
       {members.map((member) => (
         <Card key={member.id}>
-          <Label>
-            {member.name}
-            {member.archived ? " · 보관됨" : ""}
-          </Label>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+            <View
+              style={{
+                width: 14,
+                height: 14,
+                borderRadius: 7,
+                backgroundColor: member.color,
+              }}
+            />
+            <Label>
+              {member.name}
+              {member.archived ? " · 보관됨" : ""}
+            </Label>
+          </View>
           <Button
             secondary
-            title="이름 수정"
+            title="이름·색상 수정"
             disabled={busy}
             onPress={() => {
               setEditing(member.id);
               setName(member.name);
+              setColor(member.color);
             }}
           />
           {!member.archived ? (

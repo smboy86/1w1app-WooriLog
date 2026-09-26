@@ -1,4 +1,5 @@
 import type { SQLiteDatabase } from "expo-sqlite";
+import { MEMBER_COLORS } from "./report.ts";
 
 export const REGIONS = {
   head: "머리",
@@ -12,12 +13,14 @@ export type Member = {
   family_id: string;
   name: string;
   archived: number;
+  color: string;
 };
 export type HealthRecord = {
   id: string;
   family_id: string;
   member_id: string;
   member_name: string;
+  member_color: string;
   region: Region;
   symptom: string;
   occurred_at: string;
@@ -30,6 +33,11 @@ function text(value: string, max: number) {
   if (!clean || clean.length > max)
     throw new Error(`1~${max}자로 입력해 주세요.`);
   return clean;
+}
+function memberColor(value: string) {
+  if (!(MEMBER_COLORS as readonly string[]).includes(value))
+    throw new Error("가족 색상을 팔레트에서 선택해 주세요.");
+  return value;
 }
 function regionValue(region: Region) {
   if (!Object.hasOwn(REGIONS, region))
@@ -61,21 +69,32 @@ export function createStore(db: SQLiteDatabase, makeId: () => string) {
         "SELECT * FROM members WHERE family_id = ? ORDER BY archived, created_at, id",
         familyId,
       ),
-    async addMember(familyId: string, name: string) {
+    async addMember(
+      familyId: string,
+      name: string,
+      color: string = MEMBER_COLORS[0],
+    ) {
       const id = makeId();
       await db.runAsync(
-        "INSERT INTO members (id, family_id, name, created_at) VALUES (?, ?, ?, ?)",
+        "INSERT INTO members (id, family_id, name, created_at, color) VALUES (?, ?, ?, ?, ?)",
         id,
         familyId,
         text(name, 40),
         new Date().toISOString(),
+        memberColor(color),
       );
       return id;
     },
-    async renameMember(familyId: string, id: string, name: string) {
+    async updateMember(
+      familyId: string,
+      id: string,
+      name: string,
+      color: string,
+    ) {
       const result = await db.runAsync(
-        "UPDATE members SET name = ? WHERE id = ? AND family_id = ?",
+        "UPDATE members SET name = ?, color = ? WHERE id = ? AND family_id = ?",
         text(name, 40),
+        memberColor(color),
         id,
         familyId,
       );
@@ -148,7 +167,7 @@ export function createStore(db: SQLiteDatabase, makeId: () => string) {
     },
     listRecords: (familyId: string) =>
       db.getAllAsync<HealthRecord>(
-        `SELECT r.*, m.name AS member_name
+        `SELECT r.*, m.name AS member_name, m.color AS member_color
       FROM records r JOIN members m ON m.id = r.member_id AND m.family_id = r.family_id
       WHERE r.family_id = ? ORDER BY r.occurred_at DESC, r.created_at DESC, r.id DESC`,
         familyId,

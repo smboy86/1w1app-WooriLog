@@ -16,7 +16,7 @@ export default function Layout() {
             contentStyle: { backgroundColor: colors.paper },
           }}
         >
-          <Stack.Screen name="index" options={{ title: "WooriLog" }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="family" options={{ title: "우리 가족 관리" }} />
           <Stack.Screen
             name="record/index"
@@ -30,6 +30,7 @@ export default function Layout() {
             name="record/detail"
             options={{ title: "3 · 아픈 내용 상세" }}
           />
+          <Stack.Screen name="invite" options={{ title: "가족 초대" }} />
           <Stack.Screen name="history" options={{ title: "건강 기록" }} />
         </Stack>
       </DataProvider>

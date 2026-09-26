@@ -19,11 +19,14 @@ export const colors = {
   trunk: "#73AE94",
   limbs: "#83A9CD",
 };
-export function Page({ children }: PropsWithChildren) {
+export function Page({
+  children,
+  tab = false,
+}: PropsWithChildren<{ tab?: boolean }>) {
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: colors.paper }}
-      edges={["bottom", "left", "right"]}
+      edges={tab ? ["left", "right"] : ["bottom", "left", "right"]}
     >
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
         <ScrollView

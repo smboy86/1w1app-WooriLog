@@ -1,6 +1,7 @@
 import type { SQLiteDatabase } from "expo-sqlite";
+import { MEMBER_COLORS } from "./report.ts";
 
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 export const SCHEMA_SQL = `
 CREATE TABLE families (
  id TEXT PRIMARY KEY NOT NULL,
@@ -32,7 +33,7 @@ WHEN EXISTS (SELECT 1 FROM members WHERE id = NEW.member_id AND archived = 1)
 BEGIN SELECT RAISE(ABORT, '보관한 구성원에게 새 기록을 작성할 수 없습니다.'); END;
 `;
 
-// 앱 시작 시 외래키를 활성화하고 버전이 없는 DB만 초기화한다.
+// 앱 시작 시 외래키를 활성화하고 기존 데이터를 보존하면서 버전을 올린다.
 export async function initializeDatabase(db: SQLiteDatabase) {
   await db.execAsync("PRAGMA foreign_keys = ON; PRAGMA journal_mode = WAL;");
   const row = await db.getFirstAsync<{ user_version: number }>(
@@ -48,6 +49,26 @@ export async function initializeDatabase(db: SQLiteDatabase) {
       await db.execAsync(
         `BEGIN IMMEDIATE; ${SCHEMA_SQL} PRAGMA user_version = 1; COMMIT;`,
       );
+    } catch (error) {
+      await db.execAsync("ROLLBACK;").catch(() => {});
+      throw error;
+    }
+  }
+  if (version < 2) {
+    try {
+      await db.execAsync(`BEGIN IMMEDIATE;
+        ALTER TABLE members ADD COLUMN color TEXT NOT NULL DEFAULT '#287A68';`);
+      const members = await db.getAllAsync<{ id: string }>(
+        "SELECT id FROM members ORDER BY created_at, id",
+      );
+      for (let index = 0; index < members.length; index++) {
+        await db.runAsync(
+          "UPDATE members SET color = ? WHERE id = ?",
+          MEMBER_COLORS[index % MEMBER_COLORS.length],
+          members[index].id,
+        );
+      }
+      await db.execAsync("PRAGMA user_version = 2; COMMIT;");
     } catch (error) {
       await db.execAsync("ROLLBACK;").catch(() => {});
       throw error;
