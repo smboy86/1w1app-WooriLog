@@ -1,0 +1,32 @@
+# 의존성과 Expo 생성물
+node_modules/
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# 네이티브 생성물과 서명 파일
+/ios
+/android
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.pem
+
+# 로컬 환경·데이터·로그
+.env
+.env.*
+!.env.example
+*.db
+*.db-shm
+*.db-wal
+.metro-health-check*
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+.DS_Store
+*.tsbuildinfo

@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "WooriLog",
+    "slug": "woorilog",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "scheme": "woorilog",
+    "platforms": ["android"],
+    "plugins": ["expo-router", "expo-sqlite"]
+  }
+}
