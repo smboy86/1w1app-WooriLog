@@ -14,7 +14,29 @@ npm start
 
 설치된 호환 Expo Go 또는 개발 앱에서 실행합니다. `npm run android`는 연결된 Android의 실행을 시도하는 명령이며 APK를 빌드하지 않습니다. 네이티브 실행 환경이 없으면 별도로 준비해야 합니다.
 
-현재 앱 아이콘은 기본 템플릿 이미지입니다. Android 패키지 ID와 EAS 프로젝트는 아직 지정하지 않았습니다.
+현재 앱 아이콘은 기본 템플릿 이미지입니다. EAS 프로젝트는 `@smboy86/woorilog`이며 Android 패키지 ID는 아직 지정하지 않았습니다.
+
+## Expo Go 외부 미리보기
+
+개발 PC를 켜 두지 않아도 인터넷을 통해 게시본을 불러올 수 있습니다.
+
+1. Android에서 SDK 57 호환 Expo Go를 실행하고 `smboy86` 계정으로 로그인합니다.
+2. [첫 게시본 QR 코드](https://qr.expo.dev/eas-update?updateId=01a0e030-4679-7f31-a6ab-1c29f4411bbf)를 다른 화면에 띄운 뒤 Expo Go에서 스캔합니다.
+3. 직접 주소를 입력한다면 `exp://u.expo.dev/update/01a0e030-4679-7f31-a6ab-1c29f4411bbf`를 사용합니다.
+
+[Expo 정책](https://expo.dev/changelog/expo-go-loading-changes-may-2026)에 따라 게시 프로젝트 소유자 또는 소유 조직의 구성원만 Expo Go에서 불러올 수 있습니다. 건강 기록은 기기 SQLite에 남으며 서버에 공유되지 않습니다. 기존 개발 서버 실행과 게시본의 저장 공간이 같다고 보장하지 않으므로 처음에는 빈 데이터로 보일 수 있습니다.
+
+소스 수정만으로 게시본이 바뀌지는 않습니다. 다음 수정본은 이 앱 폴더에서 검사 후 게시합니다.
+
+```sh
+nvm use
+npm run check
+CI=1 npx --yes eas-cli@24.8.0 update --branch expo-go --platform android --environment preview --message '변경 내용' --non-interactive
+```
+
+게시 후 출력되는 [EAS 업데이트 대시보드](https://expo.dev/accounts/smboy86/projects/woorilog/updates)에서 해당 게시본을 확인합니다. 위 QR은 첫 게시본에 고정되어 있으므로 새 게시본은 새 업데이트 ID의 QR로 실행합니다. Expo Go 미지원 네이티브 기능을 추가하면 별도 설치 앱이 필요합니다.
+
+첫 게시(2026-09-27): Android, `expo-go` 브랜치, 런타임 `1.0.0`, 그룹 `08b46dde-d26f-450f-94f8-05903eea8c1c`. 게시와 원격 메타데이터 확인은 완료했으며 휴대폰 실행은 별도 확인이 필요합니다.
 
 ## 현재 구현
 

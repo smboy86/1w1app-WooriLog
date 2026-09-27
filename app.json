@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "WooriLog",
+    "name": "우리로그",
     "slug": "woorilog",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,10 +13,29 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "scheme": "woorilog",
-    "platforms": ["android"],
-    "plugins": ["expo-router", "expo-sqlite"]
+    "platforms": [
+      "android"
+    ],
+    "plugins": [
+      "expo-router",
+      "expo-sqlite"
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "0a7c3ecc-d6dc-471c-a078-dafee814c528"
+      }
+    },
+    "owner": "smboy86",
+    "updates": {
+      "url": "https://u.expo.dev/0a7c3ecc-d6dc-471c-a078-dafee814c528"
+    },
+    "ios": {}
   }
 }

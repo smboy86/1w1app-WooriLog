@@ -1,5 +1,6 @@
 import { Tabs } from "expo-router";
 import type { ColorValue } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Path, Circle, Rect } from "react-native-svg";
 import { colors } from "../../components/ui";
 export const unstable_settings = { initialRouteName: "index" };
@@ -40,41 +41,44 @@ function TabIcon({
 }
 export default function TabLayout() {
   return (
-    <Tabs
-      initialRouteName="index"
-      backBehavior="initialRoute"
-      screenOptions={{
-        headerStyle: { backgroundColor: colors.paper },
-        headerTintColor: colors.ink,
-        headerShadowVisible: false,
-        tabBarActiveTintColor: colors.green,
-        tabBarInactiveTintColor: "#7F8D86",
-        tabBarStyle: { backgroundColor: "#FFFFFF", borderTopColor: "#E3EAE4" },
-        tabBarLabelStyle: { fontSize: 12, fontWeight: "600" },
-        tabBarHideOnKeyboard: true,
-      }}
-    >
-      <Tabs.Screen
-        name="calendar"
-        options={{
-          title: "달력",
-          tabBarIcon: ({ color }) => <TabIcon name="calendar" color={color} />,
+    <SafeAreaView edges={["bottom"]} style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
+      <Tabs
+        safeAreaInsets={{ bottom: 0 }}
+        initialRouteName="index"
+        backBehavior="initialRoute"
+        screenOptions={{
+          headerStyle: { backgroundColor: colors.paper },
+          headerTintColor: colors.ink,
+          headerShadowVisible: false,
+          tabBarActiveTintColor: colors.green,
+          tabBarInactiveTintColor: "#7F8D86",
+          tabBarStyle: { backgroundColor: "#FFFFFF", borderTopColor: "#E3EAE4" },
+          tabBarLabelStyle: { fontSize: 12, fontWeight: "600" },
+          tabBarHideOnKeyboard: true,
         }}
-      />
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "홈 리포트",
-          tabBarIcon: ({ color }) => <TabIcon name="home" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: "설정",
-          tabBarIcon: ({ color }) => <TabIcon name="settings" color={color} />,
-        }}
-      />
-    </Tabs>
+      >
+        <Tabs.Screen
+          name="calendar"
+          options={{
+            title: "달력",
+            tabBarIcon: ({ color }) => <TabIcon name="calendar" color={color} />,
+          }}
+        />
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: "홈 리포트",
+            tabBarIcon: ({ color }) => <TabIcon name="home" color={color} />,
+          }}
+        />
+        <Tabs.Screen
+          name="settings"
+          options={{
+            title: "설정",
+            tabBarIcon: ({ color }) => <TabIcon name="settings" color={color} />,
+          }}
+        />
+      </Tabs>
+    </SafeAreaView>
   );
 }

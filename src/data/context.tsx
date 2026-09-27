@@ -50,7 +50,7 @@ export function DataProvider({ children }: PropsWithChildren) {
   if (!store)
     return (
       <Page>
-        <Heading>WooriLog</Heading>
+        <Heading>우리로그</Heading>
         <Notice>{error || "우리 가족 기록을 준비하고 있어요."}</Notice>
         {error ? (
           <Button
