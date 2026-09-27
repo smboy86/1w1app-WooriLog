@@ -18,6 +18,12 @@ npm start
 
 ## Expo Go 외부 미리보기
 
+최근 게시본(우리로그 이름·하단 안전 영역 수정)은 아래 URL을 복사하여 Expo Go 내부 URL 입력란에 붙여 넣습니다.
+
+```text
+exp://u.expo.dev/update/01a0e041-dd89-7686-abc7-6860b265d564
+```
+
 개발 PC를 켜 두지 않아도 인터넷을 통해 게시본을 불러올 수 있습니다.
 
 1. Android에서 SDK 57 호환 Expo Go를 실행하고 `smboy86` 계정으로 로그인합니다.
