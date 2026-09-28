@@ -36,6 +36,9 @@
     "updates": {
       "url": "https://u.expo.dev/0a7c3ecc-d6dc-471c-a078-dafee814c528"
     },
-    "ios": {}
+    "ios": {},
+    "runtimeVersion": {
+      "policy": "appVersion"
+    }
   }
 }
